@@ -1,0 +1,13 @@
+{
+    "type": "code",
+    "modid": "immersivetpscamera",
+    "name": "Immersive TPS Camera",
+    "authors": [
+        "BoboDev"
+    ],
+    "description": "Make the third person better",
+    "version": "1.0.0",
+    "dependencies": {
+        "game": ""
+    }
+}
