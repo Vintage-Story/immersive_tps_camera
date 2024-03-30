@@ -43,6 +43,7 @@ public class Init : ModSystem
             overrider = new Harmony(Mod.Info.ModID);
             // Applies all harmony patches
             overrider.PatchAll();
+            Debug.Log("Native camera functions has been overrited");
         }
     }
     public override void Dispose()
@@ -104,7 +105,7 @@ public class Init : ModSystem
                 var percentage = GetPercentage(yaw, 3.15, 4.75);
                 camEyePosIn[0] += 0.0 + (-1.1 - 0.0) * (percentage / 100.0);
                 camEyePosIn[2] += -1.1 + (0.0 - -1.1) * (percentage / 100.0);
-                Debug.Log($"X: {0.0 + (-1.1 - 0.0) * (percentage / 100.0)}, Z: {-1.1 + (0.0 - -1.1) * (percentage / 100.0)}");
+                // Debug.Log($"X: {0.0 + (-1.1 - 0.0) * (percentage / 100.0)}, Z: {-1.1 + (0.0 - -1.1) * (percentage / 100.0)}");
             }
             // South to East
             else
@@ -112,7 +113,7 @@ public class Init : ModSystem
                 var percentage = GetPercentage(yaw, 4.75, 6.28);
                 camEyePosIn[0] += -1.1 + (0.0 - -1.1) * (percentage / 100.0);
                 camEyePosIn[2] += 0.0 + (1.1 - 0.0) * (percentage / 100.0);
-                Debug.Log($"X: {-1.1 + (0.0 - -1.1) * (percentage / 100.0)}, Z: {0.0 + (1.1 - 0.0) * (percentage / 100.0)}");
+                // Debug.Log($"X: {-1.1 + (0.0 - -1.1) * (percentage / 100.0)}, Z: {0.0 + (1.1 - 0.0) * (percentage / 100.0)}");
             }
 
         }
