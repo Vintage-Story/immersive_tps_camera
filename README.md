@@ -7,6 +7,19 @@ Smoothly changes third-person camera positions, improving player immersion in th
 ![image](https://github.com/LeandroTheDev/immersive_tps_camera/assets/106118473/b504f6e5-a18d-43a8-9326-80474ecb75c5)
 ![image](https://github.com/LeandroTheDev/immersive_tps_camera/assets/106118473/7620e77c-dfa8-461d-bac2-fd2527f8faae)
 
+# Observations
+This mod modifies the native camera function from vintage story, and probably might break in new updates.
+
+# Considerations
+Calculation for the camera position is quietly simple so no performance can be impacted.
+
+# About Immersive Third Person Camera
+Immersive Third Person Camera is open source project and can easily be accessed on the github, all contents from this mod is completly free.
+
+If you want to contribute into the project you can access the project github and make your pull request.
+
+You are free to fork the project and make your own version of Immersive Third Person Camera, as long the name is changed.
+
 ### Using
 Download the latest version from [releases](https://github.com/LeandroTheDev/immersive_tps_camera/releases)
 
