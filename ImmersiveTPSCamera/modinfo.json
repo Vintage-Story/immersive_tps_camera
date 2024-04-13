@@ -6,7 +6,8 @@
         "BoboDev"
     ],
     "description": "Make the third person better",
-    "version": "1.0.0",
+    "version": "1.0.1",
+    "side": "server",
     "dependencies": {
         "game": ""
     }

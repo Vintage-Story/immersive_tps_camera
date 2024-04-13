@@ -1,56 +1,24 @@
-﻿using System;
 using HarmonyLib;
-using Vintagestory.API.Client;
-using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.Client.NoObf;
 
 namespace ImmersiveTPSCamera;
 
-[HarmonyPatch] // Override Class
-public class Init : ModSystem
+#pragma warning disable IDE0060
+[HarmonyPatchCategory("immersivetpscamera_camera")]
+class CameraOverwrite
 {
-    // Mod functions
-    readonly CameraFunctions cameraFunctions = new();
-    // API for handling the game state
-    ICoreClientAPI clientApi;
+    public Harmony overwriter;
 
-    Harmony overrider;
-
-    // Initialization
-    public override void StartClientSide(ICoreClientAPI api)
+    public void OverwriteNativeFunctions()
     {
-        Debug.Log("Mod Instanciated");
-        clientApi = api;
-        base.StartClientSide(api);
-        cameraFunctions.Initialize(clientApi);
-
-    }
-
-    // Disable load for servers
-    public override bool ShouldLoad(EnumAppSide forSide)
-    {
-        return forSide == EnumAppSide.Client;
-    }
-
-    // Override Methods
-    public override void Start(ICoreAPI api)
-    {
-        base.Start(api);
-        // Check if patch is already done
-        if (!Harmony.HasAnyPatches(Mod.Info.ModID))
+        if (!Harmony.HasAnyPatches("immersivetpscamera_camera"))
         {
-            overrider = new Harmony(Mod.Info.ModID);
-            // Applies all harmony patches
-            overrider.PatchAll();
-            Debug.Log("Native camera functions has been overrited");
+            overwriter = new Harmony("immersivetpscamera_camera");
+            overwriter.PatchCategory("immersivetpscamera_camera");
+            Debug.Log("Camera overwrited");
         }
-    }
-    public override void Dispose()
-    {
-        base.Dispose();
-        // Unpatch if world exit
-        overrider.UnpatchAll(Mod.Info.ModID);
+        else Debug.Log("ERROR: Camera overwriter has already patched, did some mod already has immersivetpscamera_camera in harmony?");
     }
 
     // Override Camera Position
@@ -61,25 +29,16 @@ public class Init : ModSystem
         if (CameraFunctions.shouldImmerse)
         {
             // Normalizing Yaw
-            if (yaw < 0)
-            {
-                yaw *= -1;
-                yaw = 6.28 - yaw;
-            };
-            while (yaw < 0)
-                yaw += 6.28;
-            while (yaw >= 6.28)
-                yaw -= 6.28;
+            if (yaw < 0) { yaw *= -1; yaw = 6.28 - yaw; };
+            while (yaw < 0) yaw += 6.28;
+            while (yaw >= 6.28) yaw -= 6.28;
 
             // Get the percentage between the 2 numbers and desired number
             static double GetPercentage(double value, double minValue, double maxValue)
             {
-                if (value <= minValue)
-                    return 0.0;
-                else if (value >= maxValue)
-                    return 100.0;
-                else
-                    return (value - minValue) / (maxValue - minValue) * 100.0;
+                if (value <= minValue) return 0.0;
+                else if (value >= maxValue) return 100.0;
+                else return (value - minValue) / (maxValue - minValue) * 100.0;
             }
 
             // CAMERA CALCULATION
@@ -134,13 +93,5 @@ public class Init : ModSystem
         // camEyePosIn[0] += -1.1;
         // camEyePosIn[1] += -0.1;
         // camEyePosIn[2] += 0.0;
-    }
-}
-
-public class Debug
-{
-    static public void Log(string message)
-    {
-        Console.WriteLine($"{DateTime.Now:d.M.yyyy HH:mm:ss} [Immersive Camera] {message}");
     }
 }

@@ -12,7 +12,6 @@ class CameraFunctions
     // Class initialization
     public void Initialize(ICoreClientAPI api)
     {
-        Debug.Log("Initializing camera system");
         clientAPI = api;
         clientAPI.Input.AddHotkeyListener(HotKeyListener);
         Debug.Log("Hotkeys registered");
@@ -27,7 +26,7 @@ class CameraFunctions
         }
     }
 
-    // Check if the camera is on third person and execute the immersion for the core
+    // Check if the camera is on third person and execute the immersion for the CameraOverwrite
     private void CheckThirdPerson()
     {
         // Check if player is on third person
