@@ -1,4 +1,7 @@
+using System;
 using HarmonyLib;
+using Vintagestory.API.Client;
+using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.Client.NoObf;
 
@@ -22,9 +25,11 @@ class CameraOverwrite
     }
 
     // Override Camera Position
+    static double? oldPlayerVisionX = null;
+    static double? oldPlayerVisionZ = null;
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Camera), "GetCameraMatrix")]
-    public static void GetCameraMatrix(Camera __instance, Vec3d camEyePosIn, Vec3d worldPos, double yaw, double pitch, AABBIntersectionTest intersectionTester)
+    public static void GetCameraMatrixStart(Camera __instance, Vec3d camEyePosIn, Vec3d worldPos, double yaw, double pitch, AABBIntersectionTest intersectionTester)
     {
         if (CameraFunctions.shouldImmerse)
         {
@@ -42,12 +47,18 @@ class CameraOverwrite
             }
 
             // CAMERA CALCULATION
+            IClientWorldAccessor cworld = intersectionTester.blockSelectionTester as IClientWorldAccessor;
+            EntityPlayer plr = cworld.Player.Entity;
+            oldPlayerVisionX = plr.LocalEyePos.X;
+            oldPlayerVisionZ = plr.LocalEyePos.Z;
             // East to North
             if (yaw < 1.5)
             {
                 var percentage = GetPercentage(yaw, 0.0, 1.5);
                 camEyePosIn[0] += 0.0 + (1.1 - 0.0) * (percentage / 100.0);
                 camEyePosIn[2] += 1.1 + (0.0 - 1.1) * (percentage / 100.0);
+                plr.LocalEyePos.X += 0.0 + (1.1 - 0.0) * (percentage / 100.0);
+                plr.LocalEyePos.Z += 1.1 + (0.0 - 1.1) * (percentage / 100.0);
                 // Debug.Log($"X: {0.0 + (1.1 - 0.0) * (percentage / 100.0)}, Z: {1.1 + (0.0 - 1.1) * (percentage / 100.0)}");
             }
             // North to West
@@ -56,6 +67,8 @@ class CameraOverwrite
                 var percentage = GetPercentage(yaw, 1.5, 3.15);
                 camEyePosIn[0] += 1.1 + (0.0 - 1.1) * (percentage / 100.0);
                 camEyePosIn[2] += 0.0 + (-1.1 - 0.0) * (percentage / 100.0);
+                plr.LocalEyePos.X += 1.1 + (0.0 - 1.1) * (percentage / 100.0);
+                plr.LocalEyePos.Z += 0.0 + (-1.1 - 0.0) * (percentage / 100.0);
                 // Debug.Log($"X: {1.1 + (0.0 - 1.1) * (percentage / 100.0)}, Z: {0.0 + (-1.1 - 0.0) * (percentage / 100.0)}");
             }
             // West to South
@@ -64,6 +77,8 @@ class CameraOverwrite
                 var percentage = GetPercentage(yaw, 3.15, 4.75);
                 camEyePosIn[0] += 0.0 + (-1.1 - 0.0) * (percentage / 100.0);
                 camEyePosIn[2] += -1.1 + (0.0 - -1.1) * (percentage / 100.0);
+                plr.LocalEyePos.X += 0.0 + (-1.1 - 0.0) * (percentage / 100.0);
+                plr.LocalEyePos.Z += -1.1 + (0.0 - -1.1) * (percentage / 100.0);
                 // Debug.Log($"X: {0.0 + (-1.1 - 0.0) * (percentage / 100.0)}, Z: {-1.1 + (0.0 - -1.1) * (percentage / 100.0)}");
             }
             // South to East
@@ -72,6 +87,8 @@ class CameraOverwrite
                 var percentage = GetPercentage(yaw, 4.75, 6.28);
                 camEyePosIn[0] += -1.1 + (0.0 - -1.1) * (percentage / 100.0);
                 camEyePosIn[2] += 0.0 + (1.1 - 0.0) * (percentage / 100.0);
+                plr.LocalEyePos.X += -1.1 + (0.0 - -1.1) * (percentage / 100.0);
+                plr.LocalEyePos.Z += 0.0 + (1.1 - 0.0) * (percentage / 100.0);
                 // Debug.Log($"X: {-1.1 + (0.0 - -1.1) * (percentage / 100.0)}, Z: {0.0 + (1.1 - 0.0) * (percentage / 100.0)}");
             }
 
@@ -93,5 +110,18 @@ class CameraOverwrite
         // camEyePosIn[0] += -1.1;
         // camEyePosIn[1] += -0.1;
         // camEyePosIn[2] += 0.0;
+    }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(Camera), "GetCameraMatrix")]
+    public static void GetCameraMatrixFinish(double[] __result, Camera __instance, Vec3d camEyePosIn, Vec3d worldPos, double yaw, double pitch, AABBIntersectionTest intersectionTester)
+    {
+        // Resseting player vision vision
+        IClientWorldAccessor cworld = intersectionTester.blockSelectionTester as IClientWorldAccessor;
+        EntityPlayer plr = cworld.Player.Entity;
+        if (oldPlayerVisionX != null)
+            plr.LocalEyePos.X = (double)oldPlayerVisionX;
+        if (oldPlayerVisionZ != null)
+            plr.LocalEyePos.Z = (double)oldPlayerVisionZ;
     }
 }

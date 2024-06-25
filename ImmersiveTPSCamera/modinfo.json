@@ -7,7 +7,7 @@
     ],
     "description": "Make the third person better",
     "version": "1.0.1",
-    "side": "server",
+    "side": "client",
     "dependencies": {
         "game": ""
     }
