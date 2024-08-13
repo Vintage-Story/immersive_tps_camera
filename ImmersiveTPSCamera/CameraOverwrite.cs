@@ -163,6 +163,19 @@ class CameraOverwrite
         {
             IClientWorldAccessor cworld = intersectionTester.blockSelectionTester as IClientWorldAccessor;
             EntityPlayer plr = cworld.Player.Entity;
+
+            // Specific pixel xray treatment
+            double xDiff = Math.Abs(plr.Pos.X - camEyePosOutTmp.X);
+            double yDiff = Math.Abs(plr.Pos.Y - camEyePosOutTmp.Y);
+            double zDiff = Math.Abs(plr.Pos.Z - camEyePosOutTmp.Z);
+            // Debug.Log($"PLAYER: {plr.Pos.X} {plr.Pos.Y} {plr.Pos.Z}, CAMERA: {camEyePosOutTmp.X} {camEyePosOutTmp.Y} {camEyePosOutTmp.Z}");
+            // Debug.Log($"DIFFERENCE BETWEEN: {xDiff} {yDiff} {zDiff}");
+            if (xDiff < 0.3 && zDiff < 0.4)
+            {
+                (cworld.Player as ClientPlayer).OverrideCameraMode = EnumCameraMode.FirstPerson;
+                Debug.Log("Fucking finally");
+            };
+
             double yawBrute = yaw;
             // Normalizing Yaw
             if (yaw < 0) { yaw *= -1; yaw = 6.28 - yaw; };
@@ -205,29 +218,32 @@ class CameraOverwrite
                     var percentage = GetPercentage(yaw, 0.0, 1.5);
                     camEyePosOutTmp.X -= 0.0 + (cameraXPosition - 0.0) * (percentage / 100.0);
                     camEyePosOutTmp.Z -= cameraXPosition + (0.0 - cameraXPosition) * (percentage / 100.0);
+                    // Debug.Log($"East to North, yaw: {yaw}");
                 }
                 // North to West
                 else if (yaw >= 1.5 && yaw <= 3.15)
                 {
-                    var percentage = GetPercentage(yaw, 0.0, 1.5);
+                    var percentage = GetPercentage(yaw, 1.5, 3.15);
                     camEyePosOutTmp.X -= cameraXPosition + (0.0 - cameraXPosition) * (percentage / 100.0);
                     camEyePosOutTmp.Z -= 0.0 + (-cameraXPosition - 0.0) * (percentage / 100.0);
+                    // Debug.Log($"North to West, yaw: {yaw}");
                 }
                 // West to South
                 else if (yaw > 3.15 && yaw <= 4.75)
                 {
-                    var percentage = GetPercentage(yaw, 0.0, 1.5);
+                    var percentage = GetPercentage(yaw, 3.15, 4.75);
                     camEyePosOutTmp.X -= 0.0 + (-cameraXPosition - 0.0) * (percentage / 100.0);
                     camEyePosOutTmp.Z -= -cameraXPosition + (0.0 - -cameraXPosition) * (percentage / 100.0);
+                    // Debug.Log($"West to South, yaw: {yaw}");
                 }
                 // South to East
                 else
                 {
-                    var percentage = GetPercentage(yaw, 0.0, 1.5);
+                    var percentage = GetPercentage(yaw, 4.75, 6.28);
                     camEyePosOutTmp.X -= -cameraXPosition + (0.0 - -cameraXPosition) * (percentage / 100.0);
                     camEyePosOutTmp.Z -= 0.0 + (cameraXPosition - 0.0) * (percentage / 100.0);
+                    // Debug.Log($"South to East, yaw: {yaw}");
                 }
-
 
                 #region native
                 camTargetTmp.X = camEyePosOutTmp.X + __instance.forwardVec.X;
@@ -243,7 +259,7 @@ class CameraOverwrite
             camEyePosOutTmp.X = camTargetTmp.X + __instance.forwardVec.X * (double)(0f - Tppcameradistance);
             camEyePosOutTmp.Y = camTargetTmp.Y + __instance.forwardVec.Y * (double)(0f - Tppcameradistance);
             camEyePosOutTmp.Z = camTargetTmp.Z + __instance.forwardVec.Z * (double)(0f - Tppcameradistance);
-            if (!LimitThirdPersonCameraToWalls(intersectionTester, yawBrute, camEyePosOutTmp, camTargetTmp, FloatRef.Create(Tppcameradistance)))
+            if ((cworld.Player as ClientPlayer).OverrideCameraMode == EnumCameraMode.FirstPerson || !LimitThirdPersonCameraToWalls(intersectionTester, yawBrute, camEyePosOutTmp, camTargetTmp, FloatRef.Create(Tppcameradistance)))
                 return lookatFp(plr, camEyePosIn);
         }
 
