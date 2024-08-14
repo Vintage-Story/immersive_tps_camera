@@ -171,10 +171,7 @@ class CameraOverwrite
             // Debug.Log($"PLAYER: {plr.Pos.X} {plr.Pos.Y} {plr.Pos.Z}, CAMERA: {camEyePosOutTmp.X} {camEyePosOutTmp.Y} {camEyePosOutTmp.Z}");
             // Debug.Log($"DIFFERENCE BETWEEN: {xDiff} {yDiff} {zDiff}");
             if (xDiff < 0.3 && zDiff < 0.4)
-            {
                 (cworld.Player as ClientPlayer).OverrideCameraMode = EnumCameraMode.FirstPerson;
-                Debug.Log("Fucking finally");
-            };
 
             double yawBrute = yaw;
             // Normalizing Yaw
