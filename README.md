@@ -1,3 +1,9 @@
+# Version to choose
+| Game Version         | Mod Version          |
+|----------------------|----------------------|
+| 1.20 and upper       | 1.0.6 and above      |
+| 1.19 and below       | 1.0.5 and below      |
+
 # Immersive Third Person Camera
 Smoothly changes third-person camera positions, improving player immersion in the world
 
