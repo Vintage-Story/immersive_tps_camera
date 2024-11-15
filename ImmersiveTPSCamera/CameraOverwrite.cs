@@ -12,7 +12,7 @@ namespace ImmersiveTPSCamera;
 class CameraOverwrite
 {
     public Harmony overwriter;
-    static public double cameraXPosition = 0.5;
+    static public double cameraXPosition = 1.0;
     static public double cameraYPosition = 0.00;
 
     public void OverwriteNativeFunctions()
@@ -45,41 +45,41 @@ class CameraOverwrite
                 else return (value - minValue) / (maxValue - minValue) * 100.0;
             }
 
-            // East to North
+            // South to East
             if (yaw < 1.5)
             {
                 var percentage = GetPercentage(yaw, 0.0, 1.5);
-                camEyePosIn[0] += 0.0 + (cameraXPosition - 0.0) * (percentage / 100.0);
+                camEyePosIn[0] -= cameraXPosition * (1 - percentage / 100); // percentage 0 = max
                 camEyePosIn[1] += cameraYPosition;
-                camEyePosIn[2] += cameraXPosition + (0.0 - cameraXPosition) * (percentage / 100.0);
-                // Debug.Log($"X: {0.0 + (cameraXPosition - 0.0) * (percentage / 100.0)}, Z: {cameraXPosition + (0.0 - cameraXPosition) * (percentage / 100.0)}");
+                camEyePosIn[2] += cameraXPosition * percentage / 100; // percentage 0 = min
+                Debug.Log($"YAW: {yaw}, PERCENTAGE: {percentage}, X: {-(cameraXPosition * (1 - percentage / 100))}, Z: {cameraXPosition * percentage / 100.0}");
             }
-            // North to West
+            // North to East
             else if (yaw >= 1.5 && yaw <= 3.15)
             {
                 var percentage = GetPercentage(yaw, 1.5, 3.15);
-                camEyePosIn[0] += cameraXPosition + (0.0 - cameraXPosition) * (percentage / 100.0);
+                camEyePosIn[0] += cameraXPosition * percentage / 100; // percentage 0 = min
                 camEyePosIn[1] += cameraYPosition;
-                camEyePosIn[2] += 0.0 + (-cameraXPosition - 0.0) * (percentage / 100.0);
-                // Debug.Log($"X: {cameraXPosition + (0.0 - cameraXPosition) * (percentage / 100.0)}, Z: {0.0 + (-cameraXPosition - 0.0) * (percentage / 100.0)}");
+                camEyePosIn[2] += cameraXPosition * (1 - percentage / 100); // percentage 0 = max 
+                Debug.Log($"YAW: {yaw}, PERCENTAGE: {percentage}, X: {cameraXPosition * percentage / 100}, Z: {cameraXPosition * (1 - percentage / 100)}");
             }
-            // West to South
+            // North to West
             else if (yaw > 3.15 && yaw <= 4.75)
             {
                 var percentage = GetPercentage(yaw, 3.15, 4.75);
-                camEyePosIn[0] += 0.0 + (-cameraXPosition - 0.0) * (percentage / 100.0);
+                camEyePosIn[0] += cameraXPosition * (1 - percentage / 100); // percentage 0 = max
                 camEyePosIn[1] += cameraYPosition;
-                camEyePosIn[2] += -cameraXPosition + (0.0 - -cameraXPosition) * (percentage / 100.0);
-                // Debug.Log($"X: {0.0 + (-cameraXPosition - 0.0) * (percentage / 100.0)}, Z: {-cameraXPosition + (0.0 - -cameraXPosition) * (percentage / 100.0)}");
+                camEyePosIn[2] -= cameraXPosition * percentage / 100; // percentage 0 = min
+                Debug.Log($"YAW: {yaw}, PERCENTAGE: {percentage}, X: {cameraXPosition * (1 - percentage / 100)}, Z: {-(cameraXPosition * percentage / 100)}");
             }
-            // South to East
+            // South to West
             else
             {
                 var percentage = GetPercentage(yaw, 4.75, 6.28);
-                camEyePosIn[0] += -cameraXPosition + (0.0 - -cameraXPosition) * (percentage / 100.0);
+                camEyePosIn[0] -= cameraXPosition * percentage / 100; // percentage 0 = min
                 camEyePosIn[1] += cameraYPosition;
-                camEyePosIn[2] += 0.0 + (cameraXPosition - 0.0) * (percentage / 100.0);
-                // Debug.Log($"X: {-cameraXPosition + (0.0 - -cameraXPosition) * (percentage / 100.0)}, Z: {0.0 + (cameraXPosition - 0.0) * (percentage / 100.0)}");
+                camEyePosIn[2] -= cameraXPosition * (1 - percentage / 100); // percentage 0 = max 
+                Debug.Log($"YAW: {yaw}, PERCENTAGE: {percentage}, X: {cameraXPosition * percentage / 100}, Z: {cameraXPosition * (1 - percentage / 100)}");
             }
         }
         //Camera Default Position
