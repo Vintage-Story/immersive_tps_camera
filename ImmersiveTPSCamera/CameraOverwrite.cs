@@ -52,7 +52,7 @@ class CameraOverwrite
                 camEyePosIn[0] -= cameraXPosition * (1 - percentage / 100); // percentage 0 = max
                 camEyePosIn[1] += cameraYPosition;
                 camEyePosIn[2] += cameraXPosition * percentage / 100; // percentage 0 = min
-                Debug.Log($"YAW: {yaw}, PERCENTAGE: {percentage}, X: {-(cameraXPosition * (1 - percentage / 100))}, Z: {cameraXPosition * percentage / 100.0}");
+                // Debug.Log($"YAW: {yaw}, PERCENTAGE: {percentage}, X: {-(cameraXPosition * (1 - percentage / 100))}, Z: {cameraXPosition * percentage / 100.0}");
             }
             // North to East
             else if (yaw >= 1.5 && yaw <= 3.15)
@@ -61,7 +61,7 @@ class CameraOverwrite
                 camEyePosIn[0] += cameraXPosition * percentage / 100; // percentage 0 = min
                 camEyePosIn[1] += cameraYPosition;
                 camEyePosIn[2] += cameraXPosition * (1 - percentage / 100); // percentage 0 = max 
-                Debug.Log($"YAW: {yaw}, PERCENTAGE: {percentage}, X: {cameraXPosition * percentage / 100}, Z: {cameraXPosition * (1 - percentage / 100)}");
+                // Debug.Log($"YAW: {yaw}, PERCENTAGE: {percentage}, X: {cameraXPosition * percentage / 100}, Z: {cameraXPosition * (1 - percentage / 100)}");
             }
             // North to West
             else if (yaw > 3.15 && yaw <= 4.75)
@@ -70,7 +70,7 @@ class CameraOverwrite
                 camEyePosIn[0] += cameraXPosition * (1 - percentage / 100); // percentage 0 = max
                 camEyePosIn[1] += cameraYPosition;
                 camEyePosIn[2] -= cameraXPosition * percentage / 100; // percentage 0 = min
-                Debug.Log($"YAW: {yaw}, PERCENTAGE: {percentage}, X: {cameraXPosition * (1 - percentage / 100)}, Z: {-(cameraXPosition * percentage / 100)}");
+                // Debug.Log($"YAW: {yaw}, PERCENTAGE: {percentage}, X: {cameraXPosition * (1 - percentage / 100)}, Z: {-(cameraXPosition * percentage / 100)}");
             }
             // South to West
             else
@@ -79,7 +79,7 @@ class CameraOverwrite
                 camEyePosIn[0] -= cameraXPosition * percentage / 100; // percentage 0 = min
                 camEyePosIn[1] += cameraYPosition;
                 camEyePosIn[2] -= cameraXPosition * (1 - percentage / 100); // percentage 0 = max 
-                Debug.Log($"YAW: {yaw}, PERCENTAGE: {percentage}, X: {cameraXPosition * percentage / 100}, Z: {cameraXPosition * (1 - percentage / 100)}");
+                // Debug.Log($"YAW: {yaw}, PERCENTAGE: {percentage}, X: {cameraXPosition * percentage / 100}, Z: {cameraXPosition * (1 - percentage / 100)}");
             }
         }
         //Camera Default Position
@@ -168,7 +168,7 @@ class CameraOverwrite
             double xDiff = Math.Abs(plr.Pos.X - camEyePosOutTmp.X);
             double yDiff = Math.Abs(plr.Pos.Y - camEyePosOutTmp.Y);
             double zDiff = Math.Abs(plr.Pos.Z - camEyePosOutTmp.Z);
-            // Debug.Log($"PLAYER: {plr.Pos.X} {plr.Pos.Y} {plr.Pos.Z}, CAMERA: {camEyePosOutTmp.X} {camEyePosOutTmp.Y} {camEyePosOutTmp.Z}");
+            // Debug.Log($"PLAYER: {plr.Pos.X} {plr.Pos.Y} {plr.Pos.Z}, CAMERA: {camEyePosOutTmp.X} {camEyePosOutTmp.Y} {camEyePosOutTmp.Z}");      
             // Debug.Log($"DIFFERENCE BETWEEN: {xDiff} {yDiff} {zDiff}");
             if (xDiff < 0.3 && zDiff < 0.4)
                 (cworld.Player as ClientPlayer).OverrideCameraMode = EnumCameraMode.FirstPerson;
@@ -192,6 +192,9 @@ class CameraOverwrite
             // Readding the private member
             double[] lookatFp(EntityPlayer plr, Vec3d camEyePosIn)
             {
+                // if this function is called by LimitThirdPersonCameraToWalls, we need to change the camera mode
+                (cworld.Player as ClientPlayer).OverrideCameraMode = EnumCameraMode.FirstPerson;
+
                 #region native
                 camEyePosOutTmp.X = camEyePosIn.X + plr.LocalEyePos.X;
                 camEyePosOutTmp.Y = camEyePosIn.Y + plr.LocalEyePos.Y;
@@ -207,39 +210,35 @@ class CameraOverwrite
                 }
 
 
-                // Recalculating the camera position
+                // Recalculating the camera position, this needs to be the inverse (because we are removing the immersion)
 
-                // East to North
+                // South to East
                 if (yaw < 1.5)
                 {
                     var percentage = GetPercentage(yaw, 0.0, 1.5);
-                    camEyePosOutTmp.X -= 0.0 + (cameraXPosition - 0.0) * (percentage / 100.0);
-                    camEyePosOutTmp.Z -= cameraXPosition + (0.0 - cameraXPosition) * (percentage / 100.0);
-                    // Debug.Log($"East to North, yaw: {yaw}");
+                    camEyePosOutTmp.X += cameraXPosition * (1 - percentage / 100); // percentage 0 = max
+                    camEyePosOutTmp.Z -= cameraXPosition * percentage / 100; // percentage 0 = min
                 }
-                // North to West
+                // North to East
                 else if (yaw >= 1.5 && yaw <= 3.15)
                 {
                     var percentage = GetPercentage(yaw, 1.5, 3.15);
-                    camEyePosOutTmp.X -= cameraXPosition + (0.0 - cameraXPosition) * (percentage / 100.0);
-                    camEyePosOutTmp.Z -= 0.0 + (-cameraXPosition - 0.0) * (percentage / 100.0);
-                    // Debug.Log($"North to West, yaw: {yaw}");
+                    camEyePosOutTmp.X -= cameraXPosition * percentage / 100; // percentage 0 = min
+                    camEyePosOutTmp.Z -= cameraXPosition * (1 - percentage / 100); // percentage 0 = max 
                 }
-                // West to South
+                // North to West
                 else if (yaw > 3.15 && yaw <= 4.75)
                 {
                     var percentage = GetPercentage(yaw, 3.15, 4.75);
-                    camEyePosOutTmp.X -= 0.0 + (-cameraXPosition - 0.0) * (percentage / 100.0);
-                    camEyePosOutTmp.Z -= -cameraXPosition + (0.0 - -cameraXPosition) * (percentage / 100.0);
-                    // Debug.Log($"West to South, yaw: {yaw}");
+                    camEyePosOutTmp.X -= cameraXPosition * (1 - percentage / 100); // percentage 0 = max
+                    camEyePosOutTmp.Z += cameraXPosition * percentage / 100; // percentage 0 = min
                 }
-                // South to East
+                // South to West
                 else
                 {
                     var percentage = GetPercentage(yaw, 4.75, 6.28);
-                    camEyePosOutTmp.X -= -cameraXPosition + (0.0 - -cameraXPosition) * (percentage / 100.0);
-                    camEyePosOutTmp.Z -= 0.0 + (cameraXPosition - 0.0) * (percentage / 100.0);
-                    // Debug.Log($"South to East, yaw: {yaw}");
+                    camEyePosOutTmp.X += cameraXPosition * percentage / 100; // percentage 0 = min
+                    camEyePosOutTmp.Z += cameraXPosition * (1 - percentage / 100); // percentage 0 = max 
                 }
 
                 #region native
