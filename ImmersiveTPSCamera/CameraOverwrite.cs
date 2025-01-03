@@ -161,7 +161,7 @@ class CameraOverwrite
 
         if (CameraFunctions.shouldImmerse)
         {
-            IClientWorldAccessor cworld = intersectionTester.blockSelectionTester as IClientWorldAccessor;
+            IClientWorldAccessor cworld = intersectionTester.bsTester as IClientWorldAccessor;
             EntityPlayer plr = cworld.Player.Entity;
 
             // Specific pixel xray treatment

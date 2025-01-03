@@ -1,7 +1,8 @@
 # Version to choose
 | Game Version         | Mod Version          |
 |----------------------|----------------------|
-| 1.20 and upper       | 1.0.6 and above      |
+| 1.20-rc and upper    | 1.0.7 and above      |
+| 1.20-pre             | 1.0.6                |
 | 1.19 and below       | 1.0.5 and below      |
 
 # Immersive Third Person Camera
