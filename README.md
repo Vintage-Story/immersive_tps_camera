@@ -14,31 +14,19 @@ This mod modifies the native camera function from vintage story, and probably mi
 ### Considerations
 Calculation for the camera position is quietly simple so no performance can be impacted.
 
-### About Immersive Third Person Camera
+# About Immersive Third Person Camera
 Immersive Third Person Camera is open source project and can easily be accessed on the github, all contents from this mod is completly free.
 
 If you want to contribute into the project you can access the project github and make your pull request.
 
 You are free to fork the project and make your own version of Immersive Third Person Camera, as long the name is changed.
 
-### Using
-Download the latest version from [releases](https://github.com/LeandroTheDev/immersive_tps_camera/releases)
+# Building
+- Install .NET in your system, open terminal type: ``dotnet new install VintageStory.Mod.Templates``
+- Create a template with the name ``ImmersiveTPSCamera``: ``dotnet new vsmod --AddSolutionFile -o ImmersiveTPSCamera``
+- [Clone the repository](https://github.com/LeandroTheDev/immersive_tps_camera/archive/refs/heads/main.zip)
+- Copy the ``CakeBuild`` and ``build.ps1`` or ``build.sh`` and paste inside the repository
 
-Place the mod in Mods folder vintage story
-
-
-### Building
-Learn more about vintage story modding in [Linux](https://github.com/LeandroTheDev/arch_linux/wiki/Games#vintage-story-modding) or [Windows](https://wiki.vintagestory.at/index.php/Modding:Setting_up_your_Development_Environment)
-
-### Linux
-
-Make a symbolic link for fast tests
-- ln -s /path/to/project/Releases/immersivetpscamera/* /path/to/game/Mods/ImmersiveTPSCamera/
-
-Execute the comamnd ./build.sh, consider having setup everthing from vintage story ide before
-
-### Windows
-
-Just run the ImmersiveTPSCamera.sln
+Now you can build using the ``build.ps1`` or ``build.sh`` file
 
 FTM License
