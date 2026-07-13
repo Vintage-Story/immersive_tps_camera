@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using HarmonyLib;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -14,6 +15,10 @@ class CameraOverwrite
     public Harmony overwriter;
     static public double cameraXPosition = 1.0;
     static public double cameraYPosition = 0.00;
+    static public float cameraZoomDistance = 3.0f;
+    static public bool zoomLoaded = false;
+    static public Camera cameraInstance = null;
+    static private FieldInfo targetDistanceField = null;
 
     public void OverwriteNativeFunctions()
     {
@@ -26,10 +31,30 @@ class CameraOverwrite
         else Debug.Log("ERROR: Camera overwriter has already patched, did some mod already has immersivetpscamera_camera in harmony?");
     }
 
+    static public float GetTargetZoom(Camera instance)
+    {
+        targetDistanceField ??= instance.GetType().GetField("targetCameraDistance", BindingFlags.NonPublic | BindingFlags.Instance);
+        return targetDistanceField != null ? (float)targetDistanceField.GetValue(instance) : instance.Tppcameradistance;
+    }
+
+    static public void SetTargetZoom(Camera instance, float value)
+    {
+        targetDistanceField ??= instance.GetType().GetField("targetCameraDistance", BindingFlags.NonPublic | BindingFlags.Instance);
+        targetDistanceField?.SetValue(instance, value);
+        instance.Tppcameradistance = value;
+    }
+
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Camera), "GetCameraMatrix")]
     public static void GetCameraMatrixStart(Camera __instance, Vec3d camEyePosIn, Vec3d worldPos, double yaw, double pitch, AABBIntersectionTest intersectionTester)
     {
+        cameraInstance = __instance;
+        if (!zoomLoaded)
+        {
+            zoomLoaded = true;
+            SetTargetZoom(__instance, cameraZoomDistance);
+        }
+
         if (CameraFunctions.shouldImmerse)
         {
             // Normalizing Yaw
